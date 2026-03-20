@@ -8,16 +8,9 @@ Created on Thu Mar 12 01:48:04 2026
 print('Hello World')
 
 import undetected_chromedriver as uc
-#from selenium import webdriver
-#from selenium.webdriver.common.keys import Keys
-#from selenium.webdriver.chrome.service import Service
-#from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
-
-# chrome_options = Options()
-# service = Service("E:/DevEnv/chromedriver-win64/chromedriver.exe")
 
 chrome_options = uc.ChromeOptions()
 chrome_options.add_argument("--disable-blink-features=AutomationControlled")
@@ -29,9 +22,6 @@ time.sleep(3)
 
 eventsButton = driver.find_element(By.XPATH, '//*[@id="super-container"]/div/div[1]/div[2]/div/div/div[1]/div/a[3]')
 eventsButton.click()
-
-#firstResult = driver.find_element(By.XPATH, '//*[@id="super-container"]/div[2]/div[3]/div[2]/div[3]/div/div/div[2]/a[1]')
-#firstResult
 
 soup = BeautifulSoup(driver.page_source, 'lxml')
 all_events_in_pg = soup.find_all('div', class_ = 'sc-133848s-3 sc-133848s-5 gMFRkd eUdoic')
