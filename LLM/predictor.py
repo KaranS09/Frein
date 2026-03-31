@@ -9,7 +9,7 @@ import time
 # 1. Load dataset
 # -----------------------------
 
-df = pd.read_csv("events.csv")
+df = pd.read_csv("LLM/events.csv")
 
 # clean column names
 df.columns = df.columns.str.strip()
@@ -129,6 +129,6 @@ df["Predicted group size"] = predictions
 # 8. Save updated CSV
 # -----------------------------
 
-df.to_csv("events_with_group_size.csv", index=False)
+df.to_csv("LLM/events_with_group_size_updated.csv", index=False)
 
 print("\nSaved predictions to events_with_group_size.csv")

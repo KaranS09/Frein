@@ -5,12 +5,14 @@ Created on Thu Mar 12 01:48:04 2026
 @author: karan
 """
 
-print('Hello World')
-
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
+import pandas as pd
+
+start_time = time.time()
+print("Starting the scraping process...")
 
 chrome_options = uc.ChromeOptions()
 chrome_options.add_argument("--disable-blink-features=AutomationControlled")
@@ -23,33 +25,44 @@ time.sleep(3)
 eventsButton = driver.find_element(By.XPATH, '//*[@id="super-container"]/div/div[1]/div[2]/div/div/div[1]/div/a[3]')
 eventsButton.click()
 
+
 soup = BeautifulSoup(driver.page_source, 'lxml')
 all_events_in_pg = soup.find_all('div', class_ = 'sc-133848s-3 sc-133848s-5 gMFRkd eUdoic')
 len(all_events_in_pg)
 
 links = []
+links2 = []
+prev_count = 0
+same_count_hits = 0  # track stagnation
 while True:
-    for event in all_events_in_pg:
-        link = event.find_all('a', class_ = 'sc-133848s-11 sc-1ljcxl3-1 cnWwcT buMnJU')
-        for a in link:
-            links.append(a.get('href'))
+    try:
+        for event in all_events_in_pg:
+            link = event.find_all('a', class_ = 'sc-133848s-11 sc-1ljcxl3-1 cnWwcT buMnJU')
+            for a in link:
+                links.append(a.get('href'))
 
-    driver.execute_script('window.scrollBy(0,600)')
-    time.sleep(1)
+        driver.execute_script('window.scrollBy(0,600)')
+        time.sleep(1)
 
-    soup = BeautifulSoup(driver.page_source, 'lxml')
-    all_events_in_pg = soup.find_all('div', class_ = 'sc-133848s-3 sc-133848s-5 gMFRkd eUdoic')
+        soup = BeautifulSoup(driver.page_source, 'lxml')
+        all_events_in_pg = soup.find_all('div', class_ = 'sc-133848s-3 sc-133848s-5 gMFRkd eUdoic')
 
-    links2 = list(set(links))
+        links2 = list(set(links))
+        # ✅ CHECK IF NOTHING NEW IS ADDED
+        if len(links2) == prev_count:
+            same_count_hits += 1
+        else:
+            same_count_hits = 0
 
-    if len(links2) > 200:
+        # 🔴 EXIT after 3 stagnant iterations
+        if same_count_hits >= 10:
+            print("No new content loaded → stopping")
+            break
+
+        prev_count = len(links2)
+    except Exception as e:
+        print(f"Mostly scraping list is completed: {e}")
         break
-
-
-links2
-len(links2)
-
-import pandas as pd
 
 df = pd.DataFrame(links2, columns=['Links'])
 df.to_csv('D:/linksFullRange.csv')
@@ -83,6 +96,7 @@ print(df)
 
 for link in links2:
     try:
+        time.sleep(1)
         driver.get(link)
     
         soup = BeautifulSoup(driver.page_source, 'lxml')
@@ -144,5 +158,6 @@ for link in links2:
         print(f"Skipped {link} due to error: {e}")
         continue
 
-df.to_csv('D:/events.csv')
-print(name_of_the_event)
+df.to_csv('LLM/events.csv')
+end_time = time.time()
+print(f"Execution time: {end_time - start_time:.2f} seconds")

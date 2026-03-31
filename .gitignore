@@ -1,0 +1,7 @@
+events.csv
+events_with_group_size.csv
+embedding_model.pkl
+group_size_model.pkl
+group_size_classifier.pkl
+test_events.csv
+train_events.csv
