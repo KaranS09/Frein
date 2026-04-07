@@ -1,0 +1,12 @@
+.git
+.gitignore
+.vscode
+.env.local
+*.pyc
+__pycache__
+.pytest_cache
+.DS_Store
+*.log
+*.csv
+node_modules
+.env

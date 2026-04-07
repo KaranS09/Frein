@@ -1,0 +1,6 @@
+pandas==2.0.3
+psycopg2-binary==2.9.9
+undetected-chromedriver==3.5.4
+selenium==4.15.2
+beautifulsoup4==4.12.2
+lxml==4.9.3

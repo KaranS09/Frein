@@ -1,16 +1,24 @@
 import pandas as pd
 import psycopg2
+import os
 
 # Load CSV
 df = pd.read_csv("LLM/events.csv")
 
+# Get database credentials from environment variables or use defaults
+db_host = os.getenv("DB_HOST", "localhost")
+db_port = os.getenv("DB_PORT", "5432")
+db_name = os.getenv("DB_NAME", "events_db")
+db_user = os.getenv("DB_USER", "postgres")
+db_password = os.getenv("DB_PASSWORD", "140703")
+
 # Connect to Postgres
 conn = psycopg2.connect(
-    dbname="events_db",
-    user="postgres",
-    password="140703",
-    host="localhost",
-    port="5432"
+    dbname=db_name,
+    user=db_user,
+    password=db_password,
+    host=db_host,
+    port=db_port
 )
 
 cur = conn.cursor()

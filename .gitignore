@@ -5,3 +5,4 @@ group_size_model.pkl
 group_size_classifier.pkl
 test_events.csv
 train_events.csv
+.env
