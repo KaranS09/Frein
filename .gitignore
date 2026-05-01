@@ -6,3 +6,4 @@ group_size_classifier.pkl
 test_events.csv
 train_events.csv
 .env
+Persistence/__pycache__/

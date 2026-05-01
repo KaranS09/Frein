@@ -10,14 +10,25 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 import time
 import pandas as pd
+from pathlib import Path
 
 start_time = time.time()
 print("Starting the scraping process...")
 
+OUTPUT_DIR = Path("LLM")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
 chrome_options = uc.ChromeOptions()
 chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--window-size=1920,1080")
+chrome_options.binary_location = "/usr/bin/chromium"
 
-driver = uc.Chrome(options=chrome_options)
+driver = uc.Chrome(
+    options=chrome_options,
+    version_main=147  # match installed chromium
+)
 
 driver.get('https://in.bookmyshow.com/explore/home/bengaluru')
 time.sleep(3)
@@ -64,10 +75,6 @@ while True:
         print(f"Mostly scraping list is completed: {e}")
         break
 
-df = pd.DataFrame(links2, columns=['Links'])
-df.to_csv('D:/linksFullRange.csv')
-
-del df
 del links
 
 columns = [
@@ -108,7 +115,8 @@ for link in links2:
         about[0].text
         types = soup.find_all('div', class_ = 'sc-133848s-2 sc-133848s-12 irZrCs hoNDWQ')
         types[0].text
-        img_link = soup.find('img', class_ = 'sc-1yixhh3-3 ZzXHE')
+        img_div = soup.find('div', class_ = 'sc-kxx7ad-2 wGHcd')
+        img_link = img_div.find('img')
         img_link.get('src')
         #testing start
         card = soup.find_all('div', class_ = 'sc-133848s-3 sc-133848s-5 gMFRkd eApAHD')
@@ -134,7 +142,7 @@ for link in links2:
         #testing end
     
         name_of_the_event = soup.find('h1', class_ = 'sc-7o7nez-0 fESPan').text
-        reg_link = soup.find('a', class_ = 'sc-pxa29k-1 hTHppF').get('href')
+        reg_link = soup.find('a', class_ = 'sc-8ofzm8-1 bpHTKm').get('href')
     
         df.loc[len(df)] = [
             name_of_the_event,
@@ -158,6 +166,6 @@ for link in links2:
         print(f"Skipped {link} due to error: {e}")
         continue
 
-df.to_csv('LLM/events.csv')
+df.to_csv(OUTPUT_DIR / 'events.csv', index=False)
 end_time = time.time()
 print(f"Execution time: {end_time - start_time:.2f} seconds")
